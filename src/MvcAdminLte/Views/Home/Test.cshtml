@@ -1,0 +1,124 @@
+﻿@model MvcAdminLte.Models.TestModel
+@{
+    /**/
+
+    ViewBag.Title = "Test";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var bod = Model.BoD;
+}
+
+@using (Html.BeginForm("Test", "Home", FormMethod.Post, htmlAttributes: new { id = "frmTest" }))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group" style="margin: 15px; padding: 15px;">
+        <label class="control-label col-md-2" for="Id">Mã nhân viên</label>
+        <div class="col-md-10">
+            <input type="text" id="Id" name="Id" class="form-control">
+            <span class="field-validation-valid text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group" style="margin: 15px; padding: 15px;">
+        <label class="control-label col-md-2" for="BoD">Ngày sinh</label>
+        <div class="col-md-10 input-group date">
+            <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+            </div>
+            <input type="text" id="BoD" name="BoD" class="form-control pull-right datepicker">
+            <span class="field-validation-valid text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group" style="margin: 15px; padding: 15px;">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Lưu lại" class="btn btn-default" id="ctrlSave" name="ctrlSave" />
+        </div>
+    </div>
+}
+
+@section Scripts {
+
+    <script src="https://malsup.github.io/jquery.blockUI.js"></script>
+
+    <script>
+        $(function () {
+            $('.date').datepicker();
+        });
+
+        //Submit button click
+        $(document).on('click', '#ctrlSave', function (e) {
+            
+            e.preventDefault();
+
+            
+
+            let form = $(frmTest);
+
+            //Validator: System.ComponentModel.DataAnnotations
+            $.validator.unobtrusive.parse(form);
+
+            //Validator: Form Validation
+            let isFormValid = form.valid();
+
+            if (!isFormValid) {
+                return;
+            }            
+
+            //Getter
+            let id = $('#Id').val();
+            let date = $('#BoD').val();
+            let arr = date.split('/');
+            let strDate = arr[2] + '-' + arr[0] + '-' + arr[1];
+            let boD = moment(strDate, "YYYY-MM-DD").format("DD-MM-YYYY");
+
+            //Validator: Custom Form Validation
+            if (id === '') {
+                alert('Bạn chưa nhập mã nhân viên');
+                return;
+            }
+
+            if (boD === '') {
+                alert('Bạn chưa nhập ngày sinh');
+                return;
+            }
+
+            //Setter
+            let model = {};
+
+            model.Id = +id;
+            model.BoD = boD;
+
+            //Call to Action/Controller
+            console.log(model);
+
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("Test", "Home")",
+                data: model,
+                beforeSend: function () {
+                    $('#ctrlSave').prop("disabled", true);
+                    $.blockUI({ message: 'Vui lòng đợi' });
+                },
+                success: function (blnRet) {
+                    if (blnRet) {
+                        alert('Thành công!');
+                        window.location.href = "@Url.Action("Index", "Home")";
+                    } else {
+                        alert('Thất bại');
+                        $('#BoD').focus();
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    alert("An error occurred while communicating with the server. Please try again.")
+                    console.log("An error occurred while communicating with the server: " + xhr.status + " " + textStatus + " " + errorThrown);
+                    console.log('status: ' + xhr.status);
+                    console.log('textStatus: ' + textStatus);
+                    console.log('errorThrown: ' + errorThrown);
+                },
+                complete: function () {
+                    $('#ctrlSave').prop("disabled", false);
+                    $.unblockUI();
+                }
+            });
+        });
+    </script>
+}

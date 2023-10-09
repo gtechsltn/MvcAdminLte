@@ -12,7 +12,7 @@
 + DataTables
 + AutoNumeric.js
 + Log4net
-+ Dapper
-+ Dapper.Contrib
++ Dapper v2.0.78
++ Dapper.Contrib v2.0.78
 + CsvHelper
 + Humanizer

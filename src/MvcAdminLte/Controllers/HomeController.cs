@@ -16,12 +16,6 @@ namespace MvcAdminLte.Controllers
         }
 
         [HttpGet]
-        public ActionResult AnotherLink()
-        {
-            return View("Index");
-        }
-
-        [HttpGet]
         public ActionResult Test()
         {
             var model = new TestModel

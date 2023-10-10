@@ -16,3 +16,6 @@
 + Dapper.Contrib v2.0.78
 + CsvHelper
 + Humanizer
+
+# Test
++ https://localhost/swagger/
